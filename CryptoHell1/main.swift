@@ -20,9 +20,5 @@ import Foundation
 // print(vigenereDehexed.vigenereDeciphered())
 
 /* Task 3 */
-//print(substitutionCiphered.substitutionDeciphered())
-
-var solutions = ["Meow" : 4, "WOF" : 2, "KAR" : 3]
-
-print(solutions.shuffled().sorted { $0.value < $1.value }.first!.key)
+substitutionCiphered.substitutionDeciphered()
 

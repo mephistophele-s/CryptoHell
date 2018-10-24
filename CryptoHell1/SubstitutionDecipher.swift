@@ -17,46 +17,38 @@ class SubstitutionDecipher {
         
         var iterationsCount = 0
         var deciphered = ""
-        
-        var solutions: [String: Double] = [:]
-        
         let probabilities = _probabilities()
         
         repeat {
             var key = _parent()
-            print("PPParent is \(key)")
             deciphered = _deciphered(text: text, with: key)
             var fitness = _fitness(text: deciphered, probabilities: probabilities)
-            while iterationsCount < 1000 {
+            while fitness < fitnessForEnglish && iterationsCount <= 1000 {
                 let mutated = _mutated(key)
                 let newDeciphered = _deciphered(text: text, with: mutated)
                 let newFitness = _fitness(text: newDeciphered, probabilities: probabilities)
                 if newFitness > fitness {
-                    print("New parent is \(key)")
-                    print("New fitness is \(newFitness)")
-                    print("Deciphered text is \(deciphered)")
                     fitness = newFitness
                     key = mutated
                     deciphered = newDeciphered
+                    print("New parent is \(key)")
+                    print("New fitness is \(newFitness)")
+                    print("Deciphered text is \(deciphered)")
                     iterationsCount = 0
                 }
-
                 iterationsCount += 1
-                //print(iterationsCount, newFitness)
             }
-            
-            iterationsCount = 0
-            // ne rabotaet(
-            solutions[deciphered] = fitness
-        } while solutions.count < 2
+            if iterationsCount > 1000 {
+                iterationsCount = 0
+                continue
+            } else { break }
+        } while true
         
-        return solutions.sorted { $0.value < $1.value }.first!.key
+        return deciphered
     }
     
     private let alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".flatMap { $0.description }
     private let fitnessForEnglish = -147.0
-    
-    private var usedKeys: [[Character]] = []
 }
 
 private extension SubstitutionDecipher {
@@ -91,16 +83,12 @@ private extension SubstitutionDecipher {
     
     func _mutated(_ key: [Character]) -> [Character] {
         var mutated = key
-        
+        let i = Int.random(in: (0..<key.count))
+        var j: Int
         repeat {
-            let i = Int.random(in: (0..<key.count))
-            var j: Int
-            repeat {
-                j = Int.random(in: (0..<key.count))
-            } while j == i
-            mutated.swapAt(i, j)
-        } while usedKeys.contains(mutated)
-        usedKeys.append(mutated)
+            j = Int.random(in: (0..<key.count))
+        } while j == i
+        mutated.swapAt(i, j)
         return mutated
     }
     
